@@ -1,0 +1,10 @@
+# Files whose content a hook (or the code that starts a session) puts in front of the model.
+# A sync that changes one of them always needs a person to read it: the upstream-sync pull request
+# is titled "[hook texts changed]". One git glob per line, "#" starts a comment.
+# The sync reads this list from the tree BEFORE the merge, so upstream cannot shorten it.
+# Plain skill documentation that no hook prints (SKILL.md, references/, assets) is deliberately not listed.
+plugins/task-observer-flush/hooks/**
+**/hooks/**
+**/hooks.json
+# the scan the session-start protocol runs; its output goes to the model
+skills/task-observer/scripts/session-start-scan.sh
