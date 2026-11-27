@@ -14,12 +14,19 @@
 #                   tautology (references/environments.md, "Where the scripts
 #                   are not on the device"), so a digests file carrying a
 #                   `verified_against:` line is the MANIFEST and is refused.
-#                   It may open with the installed SKILL.md's `version:` line
-#                   (the "Refresh the digests" row there writes it).
-#   --installed-version <v>  the installed skill's frontmatter `version:`,
+#                   It may open with the installed SKILL.md's version line —
+#                   `metadata.version`, or a top-level `version:` on an older
+#                   install — read indented or not (the "Refresh the digests"
+#                   row there writes it).
+#   --installed-version <v>  the installed skill's frontmatter version,
 #                   where the digests file does not carry it.
 #   <script>        the file name under .bin/ to run (session-start-scan.sh,
-#                   skill-load.sh, new-observation.sh, …); a .py runs under
+#                   skill-load.sh, new-observation.sh, …): a plain name, so a
+#                   name holding a `/` or `\` or starting with `.` is refused before
+#                   anything is read — `../x.sh` or an absolute path would
+#                   select a file outside the verified set — and so is a
+#                   name not ending in .sh or .py, the files the digest
+#                   loop checks; a .py runs under
 #                   the first of python3, python that RUNS and reports major
 #                   version 3 — `command -v` alone finds a Windows Store
 #                   alias, a stub that only prints an install hint
@@ -33,7 +40,7 @@
 #
 # Exit status: the script's own once it runs; 3 = refused, nothing ran — a
 # .bin/ file whose digest differs from, or is missing from, the installed set,
-# or a failed version gate (refresh .bin/ from the installed scripts:
+# a script name that is not a plain file name, or a failed version gate (refresh .bin/ from the installed scripts:
 # references/weekly-review.md, Step 1 gate), or a .py with no working Python 3
 # to run it (its own line, `BIN REFUSED — no working Python 3`, never a digest
 # failure); 2 = usage. bash 3.2-compatible;
@@ -50,12 +57,18 @@ root="${1:-}"; dig="${2:-}"; script="${3:-}"
 if [ -z "$root" ] || [ -z "$dig" ] || [ -z "$script" ]; then
   echo "$usage" >&2; exit 2
 fi
+case $script in
+  (*/*|*\\*|.*) echo "BIN REFUSED — '$script' is not a plain script name: name a file directly under .bin/" >&2; exit 3 ;;
+  (*.sh|*.py) ;;
+  (*) echo "BIN REFUSED — '$script' is not a .sh or .py file: only those carry a digest check" >&2; exit 3 ;;
+esac
 [ -r "$dig" ] || { echo "digests file missing or unreadable: '$dig'" >&2; exit 2; }
 shift 3
 bin="$root/skill-observations/.bin"
 [ -f "$bin/$script" ] || { echo "BIN REFUSED — no '$script' under '$bin'" >&2; exit 3; }
-# `key: "1.2.3"` -> 1.2.3 (first matching line of a file; quotes and spaces dropped)
-field() { awk -v k="$1" 'index($0, k ":") == 1 {v = substr($0, length(k) + 2); gsub(/["'"'"' \t\r]/, "", v); print v; exit}' "$2"; }
+# `key: "1.2.3"` -> 1.2.3 (first matching line of a file, indented or not, so
+# a `metadata.version` line copied with its indent reads; quotes and spaces dropped)
+field() { awk -v k="$1" '{s = $0; sub(/^[ \t]+/, "", s)} index(s, k ":") == 1 {v = substr(s, length(k) + 2); gsub(/["'"'"' \t\r]/, "", v); print v; exit}' "$2"; }
 [ -z "$(field verified_against "$dig")" ] || { echo "BIN REFUSED — '$dig' carries verified_against: it is the MANIFEST, not the installed digests" >&2; exit 3; }
 [ -n "$iv" ] || iv=$(field version "$dig")
 iv=$(printf '%s' "$iv" | tr -d "\"' ")

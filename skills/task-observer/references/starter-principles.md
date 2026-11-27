@@ -2,7 +2,7 @@
 
 Load triggers: the starter-set reconciliation is due (marker absent or older than this file's set)
 
-Starter set version: 4
+Starter set version: 5
 
 This file is NOT the adopter's principles file. It is an optional seed:
 a curated set of generic methodology principles, accumulated over a long
@@ -16,6 +16,13 @@ here takes effect until the adopter consciously imports it.
 
 SKILL.md step 1 points here for the whole procedure; it carries only the
 trigger and the one-line summary.
+
+Offer it only in a review or a session the user opened for skill work,
+never appended to another task's reply (it waits for the next review);
+then load that file and follow its **Reconciliation** section: match by
+substance, offer once in one line, import only what the adopter picks,
+then — once answered — write the shipped version into the marker file,
+alone on one line; never pre-populate silently.
 
 **When to read this file:** only when the Session Start Protocol
 (SKILL.md, step 1) finds the starter-set reconciliation due — the marker
@@ -42,7 +49,11 @@ would have checked it — a recommendation drafted from titles has cited
 entries about something else, and only the import caught it. **The
 marker records an answer, not an offer:** write the shipped version into the
 marker file only after an explicit choice — seed all, seed some, or
-start empty — so the offer never repeats until the set changes. A reply
+start empty — and, after an import, only once the read-back below
+finds it, so the offer never repeats until the set changes. The
+marker is one line holding only that version as a bare integer (`4`),
+with no prefix and no note beside it: the step 2 scan reports any
+other text instead of comparing it. A reply
 that does not address the offer is not a choice: leave the marker absent
 so the offer returns next session. Ask it as its own question, never as
 the last line of another task's report, where it goes unread and the
@@ -91,11 +102,46 @@ started in, and says so.
 **How to import:** copy the entries the adopter chooses (all, or a subset)
 into the live file in the template format from `references/skill-authoring.md`,
 setting `**Added:**` to the import date, `**Propagation:** opportunistic`,
-`**Status:** active`, and adding `**Origin:** imported from starter set` to
-each. The Origin marker is load-bearing: it tells every later review that
-the entry arrived without local evidence, so the pruning pass can drop it
-as freely as any single-observation rule. Imported principles that never
+`**Status:** active`, and adding `**Origin:** imported from starter set (#N)`
+to each, N being the entry's number here. The Origin marker is
+load-bearing: it tells every later review that the entry arrived without
+local evidence, so the pruning pass can drop it as freely as any
+single-observation rule. Imported principles that never
 fire in the adopter's own work should be removed, not kept out of respect.
+
+**Remap every entry number inside an imported entry.** Entries here cite
+each other by number, and the live file numbers the imports in its own
+sequence. Rewrite each "entry N" in an imported entry to that entry's live
+number, or to "starter #N, not imported". Then grep the imported entries
+for `entry [0-9]` and check every hit before the marker is written. For
+example, a cited "entry 11" becomes "entry 4" where starter entry 11 was
+imported as live entry 4.
+
+**Read the import back before the marker certifies it.** The marker
+records that the adopter answered, and a copy that never landed looks the
+same from it. After copying, read the live file's `## Active Principles`
+and find `imported from starter set (#N)` for every number picked. Write
+the marker only when every one is there; otherwise redo the copy, or say
+which numbers are missing. Then append one line to `checkpoints.log`
+naming the picked numbers, so a later loss can be redone without asking
+again: `<date> <time> starter set v4 reconciled: 3 imported (3, 7, 11)`,
+with `0 imported` for a start-empty answer. The step 2 scan prints `DUE:
+starter-set import lost` when that line records imports and the Active
+Principles hold none.
+
+**A skipped entry is recorded with what would make it apply, in the
+marker's write.** A partial import is the expected outcome, and its
+commonest reason is "not applicable yet": a condition that changes in the
+adopter's work, never in this file's version, so the version-keyed
+re-offer cannot fire for it, and a deferral recorded nowhere reads
+exactly like a rejection. So the step that writes the marker also writes
+`skill-observations/starter-principles-deferred.md`, one line per offered
+entry not imported: `#N <title> — deferred until <condition>`, a
+condition that can be named and can occur (a first published skill, a
+first scheduled task), or `#N <title> — declined`. The review re-checks
+each condition against the work since (`weekly-review.md`, Step 1) and
+re-offers an entry whose condition has fired, one line each; the marker
+still records the answered version.
 
 **Extend `Origin:` with the evidence that justified the entry** — one line
 naming the local artefact, after the `imported from starter set (#N)` part:
@@ -488,6 +534,21 @@ two before reading anything out of it; a mismatch means a sample, not the
 population. Prefer the interface that returns the artefact to the one
 that returns a summary of it, because only the latter can silently
 shorten.
+
+An empty result means nothing until the instrument has been shown to run.
+Check each tool a filter calls (`command -v`), never discard the stderr of
+a filter whose failure would read as "no match", run it once on an input
+known to match, and make a watch loop print its full initial state on its
+first pass, so that zero events can only mean it never ran. A missing tool
+and a clean search print the same nothing. Delete a raw capture only after
+its parser has printed the raw line count and the first error line.
+
+Presence has its counterpart: a read that returns *something* has not
+returned *the thing*. Block pages, captchas and login interstitials arrive
+as successful responses with a title and a URL. Assert a shape of the
+expected content (the site's own container, an expected phrase, a length
+floor) before using a page's text, and in a batch print that verdict per
+page, so one block page cannot hide in a run of successes.
 
 ### 29. A skill holds method; dated values live in a workspace file the skill names
 **Applies to:** all skills, open-source and internal
